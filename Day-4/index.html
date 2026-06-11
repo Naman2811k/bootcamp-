@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>STRATOS — Weather</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <div class="noise-overlay"></div>
+
+  <div class="app">
+
+    <!-- TOP NAV -->
+    <nav class="nav" id="nav">
+      <div class="nav-brand">
+        <span class="brand-sym">▲</span>
+        <span class="brand-name">STRATOS</span>
+      </div>
+
+      <div class="nav-center" id="tickerWrap">
+        <div class="ticker" id="ticker">
+          <span id="tickerText">ENTER A CITY TO BEGIN &nbsp;·&nbsp; LIVE ATMOSPHERIC DATA &nbsp;·&nbsp; WORLDWIDE COVERAGE</span>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <div class="search-container" id="searchContainer">
+          <button class="search-toggle" id="searchToggle" aria-label="Search">
+            <svg viewBox="0 0 20 20" fill="none">
+              <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="m13 13 3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div class="search-panel" id="searchPanel">
+            <input type="text" id="searchInput" placeholder="city, country…" autocomplete="off" spellcheck="false"/>
+            <button class="search-go" id="searchGo">GO</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- RECENT CHIPS -->
+    <div class="recents-bar" id="recentsBar" style="display:none">
+      <span class="recents-label">RECENT</span>
+      <div class="recents-list" id="recentsList"></div>
+      <button class="recents-clear" id="recentsClear">✕</button>
+    </div>
+
+    <!-- MAIN -->
+    <main class="main" id="main">
+
+      <!-- INIT -->
+      <div class="screen screen-init" id="screenInit">
+        <div class="init-content">
+          <div class="init-symbol">▲</div>
+          <p class="init-headline">Atmospheric Intelligence</p>
+          <p class="init-sub">Search any city above to pull real-time atmospheric data.</p>
+        </div>
+        <div class="init-grid"></div>
+      </div>
+
+      <!-- LOADING -->
+      <div class="screen screen-loading hidden" id="screenLoading">
+        <div class="loading-inner">
+          <div class="loading-bars">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <p class="loading-text" id="loadingText">LOCATING</p>
+        </div>
+      </div>
+
+      <!-- ERROR -->
+      <div class="screen screen-error hidden" id="screenError">
+        <div class="error-code">404</div>
+        <p class="error-msg" id="errorMsg">City not found.</p>
+        <button class="error-retry" id="retryBtn">RETRY</button>
+      </div>
+
+      <!-- WEATHER DISPLAY -->
+      <div class="weather hidden" id="weather">
+
+        <!-- HERO -->
+        <div class="hero" id="hero">
+          <div class="hero-location">
+            <div class="hero-city-row">
+              <span class="hero-pin">◈</span>
+              <h1 class="hero-city" id="cityName">—</h1>
+              <span class="hero-country" id="countryCode">—</span>
+            </div>
+            <div class="hero-meta-row">
+              <span class="hero-date" id="dateStr">—</span>
+              <span class="hero-sep">·</span>
+              <span class="hero-cond" id="conditionText">—</span>
+            </div>
+          </div>
+
+          <div class="hero-temp-block">
+            <div class="hero-temp-main">
+              <span class="hero-temp-num" id="tempNum">—</span>
+              <div class="hero-temp-side">
+                <span class="hero-unit">°C</span>
+                <div class="hero-hilo">
+                  <span class="hero-hi" id="tempMax">—</span>
+                  <span class="hero-lo" id="tempMin">—</span>
+                </div>
+              </div>
+            </div>
+            <div class="hero-icon-row">
+              <img id="weatherIcon" class="hero-weather-icon" src="" alt=""/>
+              <div class="hero-feels">
+                <span class="feels-lbl">FEELS LIKE</span>
+                <span class="feels-val" id="feelsLike">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAPE STRIP: stats -->
+        <div class="tape" id="tape">
+          <div class="tape-item">
+            <span class="tape-val" id="humidity">—</span>
+            <span class="tape-lbl">HUMIDITY</span>
+          </div>
+          <div class="tape-divider"></div>
+          <div class="tape-item">
+            <span class="tape-val" id="windSpeed">—</span>
+            <span class="tape-lbl">WIND</span>
+          </div>
+          <div class="tape-divider"></div>
+          <div class="tape-item">
+            <span class="tape-val" id="visibility">—</span>
+            <span class="tape-lbl">VISIBILITY</span>
+          </div>
+          <div class="tape-divider"></div>
+          <div class="tape-item">
+            <span class="tape-val" id="pressure">—</span>
+            <span class="tape-lbl">PRESSURE</span>
+          </div>
+          <div class="tape-divider"></div>
+          <div class="tape-item">
+            <span class="tape-val" id="uvIndex">—</span>
+            <span class="tape-lbl">UV INDEX</span>
+          </div>
+        </div>
+
+        <!-- LOWER GRID: sun + aqi + forecast -->
+        <div class="lower">
+
+          <!-- SUN PANEL -->
+          <div class="panel panel-sun">
+            <div class="panel-label">SOLAR</div>
+            <div class="sun-row">
+              <div class="sun-time-col">
+                <span class="sun-tag">RISE</span>
+                <span class="sun-val" id="sunrise">—</span>
+              </div>
+              <div class="sun-arc-col">
+                <svg class="sun-svg" viewBox="0 0 180 70" fill="none">
+                  <path d="M10 62 Q90 6 170 62" stroke="rgba(255,255,255,0.07)" stroke-width="1.5" stroke-linecap="round"/>
+                  <path id="sunArcProgress" d="M10 62 Q90 6 170 62" stroke="url(#sg)" stroke-width="2" stroke-linecap="round" stroke-dasharray="200" stroke-dashoffset="200"/>
+                  <circle id="sunDot" cx="10" cy="62" r="5" fill="#FF6B00"/>
+                  <circle id="sunHalo" cx="10" cy="62" r="9" fill="#FF6B00" opacity="0.18"/>
+                  <defs>
+                    <linearGradient id="sg" x1="10" y1="62" x2="170" y2="62" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stop-color="#FF6B00"/>
+                      <stop offset="100%" stop-color="#FFB800"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+              <div class="sun-time-col right">
+                <span class="sun-tag">SET</span>
+                <span class="sun-val" id="sunset">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AQI PANEL -->
+          <div class="panel panel-aqi" id="aqiPanel" style="display:none">
+            <div class="panel-label">AIR QUALITY</div>
+            <div class="aqi-body">
+              <span class="aqi-val" id="aqiLevel">—</span>
+              <div class="aqi-bar-track">
+                <div class="aqi-bar-fill" id="aqiFill"></div>
+              </div>
+              <div class="aqi-legend">
+                <span>Good</span>
+                <span>Fair</span>
+                <span>Mod</span>
+                <span>Poor</span>
+                <span>V.Poor</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- FORECAST PANEL -->
+          <div class="panel panel-forecast">
+            <div class="panel-label">5-DAY OUTLOOK</div>
+            <div class="forecast-list" id="forecastList"></div>
+          </div>
+
+        </div>
+
+      </div>
+      <!-- end #weather -->
+
+    </main>
+
+    <!-- SAVED CITIES -->
+    <div class="saved-bar" id="savedBar" style="display:none">
+      <div class="saved-inner">
+        <span class="saved-label">SAVED</span>
+        <div class="saved-chips" id="savedChips"></div>
+        <button class="saved-clear" id="savedClear">CLEAR ALL</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
