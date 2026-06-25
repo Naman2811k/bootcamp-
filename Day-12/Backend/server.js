@@ -9,7 +9,11 @@ const loggerMiddleware = require("./middleware/loggerMiddleware");
 
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "https://bootcamp-b45p.vercel.app",  // your frontend domain
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
 app.use(express.json());
 
