@@ -14,7 +14,7 @@ function App() {
   const [search, setSearch] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("");
 
-  const API_URL = "https://bootcamp-pro-g2cz.onrender.com/employees";
+  const API_URL = "https://bootcamp-5yno.onrender.com/employees";
 
   // FETCH EMPLOYEES
   const getEmployees = async () => {
